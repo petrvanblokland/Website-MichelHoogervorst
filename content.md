@@ -18,7 +18,7 @@ box = page.deepFind('Introduction')
 
 #### Previous project (ended Feb 2017) 
 
-### [OTTHON Leszek](projects.html) Previous project (ended March 2017) 
+### [Otthon Leszek](projects.html) Previous project (ended March 2017) 
 
 ### [Cash in studio](projects.html) Permanent project 
 
