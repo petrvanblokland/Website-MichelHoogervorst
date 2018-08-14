@@ -23,9 +23,10 @@ from pagebot.typesetter import Typesetter
 from pagebot.elements import *
 from pagebot.toolbox.color import color, whiteColor
 from pagebot.toolbox.units import em
+from pagebot.toolbox.dating import now
 
 MD_PATH = 'content.md'
-EXPORT_PATH = '_export/SimpleSite'
+EXPORT_PATH = 'docs'
 
 DO_FILE = 'File' # Generate website output in _export/SimpleSite and open browser on file index.html
 DO_MAMP = 'Mamp' # Generate website in /Applications/Mamp/htdocs/SimpleSite and open a localhost
@@ -150,10 +151,11 @@ class SlideShow(Element):
         b.comment('End '+self.__class__.__name__)
             
 class Hero(Element):
-    def __init__(self, **kwargs):
+    def __init__(self, introId=None, slidesId=None, **kwargs):
         Element.__init__(self, **kwargs)
-        newTextBox('', parent=self, cssId='Introduction')
-        SlideShow(parent=self, cssId='HeroSlides')
+        newTextBox('', parent=self, cssId=introId or 'Introduction')
+        print('fdfds', slidesId)
+        SlideShow(parent=self, cssId=slidesId or 'HeroSlides')
 
     def build_html(self, view, path):
         b = self.context.b
@@ -180,8 +182,9 @@ class Hero(Element):
         b.comment('End '+self.__class__.__name__)
                                
 class Content(Element):
-    def __init__(self, **kwargs):
+    def __init__(self, contentId=None, **kwargs):
         Element.__init__(self, **kwargs)
+        #newTextBox('', parent=self, cssId=contentId or 'Content')
         newTextBox('', parent=self, cssId='Content')
 
     def build_html(self, view, path):
@@ -192,11 +195,11 @@ class Content(Element):
         # Content here, should come from markdown file.
         for e in self.elements:
             e.build_html(view, path)
-        b.p()
-        b.a(href='index.html', cssClass='buttonlink')
-        b.addHtml('Use Pagebot')
-        b._a()
-        b._p()
+        #b.p()
+        #b.a(href='index.html', cssClass='buttonlink')
+        #b.addHtml('Use Pagebot')
+        #b._a()
+        #b._p()
         b._section() # end content area -->
         b._div() # end div #main .wrapper 
         b.comment('End #main .wrapper .clearfix')
@@ -253,11 +256,11 @@ class Site(Publication):
     """
 
 SITE = [
-    ('index', 'PageBot Responsive Home'),
-    ('content', 'PageBot Responsive Content'),
-    ('page3', 'PageBot Responsive Page 3'),
-    ('page4', 'PageBot Responsive Page 4'),
-    ('page5', 'PageBot Responsive Page 5'),
+    ('index', 'Home'),
+    ('projects', 'Projects'),
+    ('works', 'Works'),
+    ('exhibitions', 'Exhibitions'),
+    ('contact', 'Contact'),
 ]
 style = dict(
     fill=whiteColor,
@@ -290,35 +293,61 @@ for pn, (name, title) in enumerate(SITE):
     # TODO: Build this automatic from the content of the pages table.
     menu = TopMenu(parent=navigation)
     menuItem1 = MenuItem(parent=menu, href='index.html', label='Home', current=currentPage=='index.html')
-    menuItem2 = MenuItem(parent=menu, href='content.html', label='Internal page demo', current=currentPage=='content.html')
-    menuItem3 = MenuItem(parent=menu, href='page3.html', label='menu item 3', current=currentPage=='page3.html')
-    menuItem4 = MenuItem(parent=menu, href='page4.html', label='menu item 4', current=currentPage=='page4.html')
-    menuItem5 = MenuItem(parent=menu, href='page5.html', label='menu item 5', current=currentPage=='page5.html')
+    menuItem2 = MenuItem(parent=menu, href='projects.html', label='Projects', current=currentPage=='projects.html')
+    menuItem3 = MenuItem(parent=menu, href='works.html', label='Works', current=currentPage=='works.html')
+    menuItem4 = MenuItem(parent=menu, href='exhibitions.html', label='Exhibitions', current=currentPage=='exhibitions.html')
+    menuItem5 = MenuItem(parent=menu, href='contact.html', label='Contact', current=currentPage=='contact.html')
+    
+    menu2 = Menu(parent=menuItem2)
+    menuItem21 = MenuItem(parent=menu2, href='projects.html', label='Guess things happen that way', current=False)
+    menuItem22 = MenuItem(parent=menu2, href='projects.html', label='OTTHON Leszek', current=False)
+    menuItem23 = MenuItem(parent=menu2, href='projects.html', label='Cash in studio', current=False)
     
     menu3 = Menu(parent=menuItem3)
-    menuItem31 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.1', current=False)
-    menuItem32 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.2 with longer link name', current=False)
-    menuItem33 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.3', current=False)
-    menuItem34 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.4', current=False)
-    menuItem35 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.5', current=False)
-    menuItem36 = MenuItem(parent=menu3, href='page3.html', label='menu item 3.6', current=False)
+    menuItem31 = MenuItem(parent=menu3, href='works.html', label='Paintings', current=False)
+    menuItem32 = MenuItem(parent=menu3, href='works.html', label='Drawings', current=False)
 
-    menu33 = Menu(parent=menuItem33)
-    menuItem331 = MenuItem(parent=menu33, href='page3.html', label='menu item 3.3.1', current=False)
-    menuItem332 = MenuItem(parent=menu33, href='page3.html', label='menu item 3.3.2 with longer link name', current=False)
-    menuItem333 = MenuItem(parent=menu33, href='page3.html', label='menu item 3.3.3', current=False)
-    
-    menu4 = Menu(parent=menuItem4)
-    menuItem41 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.1', current=False)
-    menuItem42 = MenuItem(parent=menu4, href='page4.html', label='menu item 4.2', current=False)
+    # WORKS info uit ander bestand halen: archive.md
+    menu31 = Menu(parent=menuItem31)
+    for n in range(1994, now().year+1):
+        MenuItem(parent=menu31, href='works.html', label='%d' % n, current=False)
+    menu32 = Menu(parent=menuItem32)
+    for n in range(1994, now().year+1):
+        MenuItem(parent=menu32, href='works.html', label='%d' % n, current=False)
+   
+    # Vullen met content van: exhibitions.md
+    menu41 = Menu(parent=menuItem4)
+    for n in (1996, 1998, 2003, 2004, 2005, 2015, 2016, 2017, 2018):
+        MenuItem(parent=menu41, href='works.html', label='%d' % n, current=False)
     
     menu5 = Menu(parent=menuItem5)
-    menuItem51 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.1', current=False)
-    menuItem52 = MenuItem(parent=menu5, href='page5.html', label='menu item 5.2', current=False)
+    menuItem51 = MenuItem(parent=menu5, href='contact.html', label='Contact', current=False)
+    menuItem52 = MenuItem(parent=menu5, href='contact.html', label='CV', current=False)
+    menuItem53 = MenuItem(parent=menu5, href='contact.html', label='Links', current=False)
     
-    hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
-    
-    content = Content(parent=page, fill=whiteColor)
+    if pn+1 == 1: # Home
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
+        content = Content(parent=page, fill=whiteColor)
+        section = ColoredSection(parent=page)
+    elif pn+1 == 2: # Projects
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
+        content = Content(parent=page, fill=whiteColor)
+        #hero2 = Hero(parent=page, fontSize=em(1.1), fill=0.95, cssId='Hero2', introId='Introduction2', slidesId='HeroSlides2')
+        #content2 = Content(parent=page, fill=whiteColor, contentId='Content2')
+        #content3 = Content(parent=page, fill=whiteColor, contentId='Content3')
+
+    elif pn+1 == 3: # Works
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
+        content = Content(parent=page, fill=whiteColor)
+        #hero2 = Hero(parent=page, fontSize=em(1.1), fill=0.95, cssId='Hero2', introId='Introduction2', slidesId='HeroSlides2')
+    elif pn+1 == 4: # Exhibitions
+        hero = Hero(parent=page, fontSize=em(1.1), fill=0.95)
+        content = Content(parent=page, fill=whiteColor)
+        #hero2 = Hero(parent=page, fontSize=em(1.1), fill=0.95, cssId='Hero2', introId='Introduction2', slidesId='HeroSlides2')
+    elif pn+1 == 5: # Contact
+        content = Content(parent=page, fill=whiteColor)
+        #hero2 = Hero(parent=page, fontSize=em(1.1), fill=0.95, cssId='Hero2', introId='Introduction2', slidesId='HeroSlides2')
+
     section = ColoredSection(parent=page)
     footer = Footer(parent=page)
     
@@ -344,7 +373,7 @@ elif EXPORT_TYPE == DO_MAMP:
     mampView.jsUrls = view.jsUrls
     mampView.cssUrls = view.cssUrls
 
-    MAMP_PATH = '/Applications/MAMP/htdocs/SimpleSite' 
+    MAMP_PATH = '/Applications/MAMP/htdocs/MichelHoogervorstSite' 
     doc.export(path=MAMP_PATH)
 
     if not os.path.exists(MAMP_PATH):
@@ -352,7 +381,7 @@ elif EXPORT_TYPE == DO_MAMP:
         os.system(u'open %s' % view.MAMP_SHOP_URL)
     else:
         #t.doc.export('_export/%s.pdf' % NAME, multiPages=True)
-        os.system(u'open "%s"' % mampView.getUrl('SimpleSite'))
+        os.system(u'open "%s"' % mampView.getUrl('MichelHoogervorstSite'))
 
 elif EXPORTTYPE == DO_GIT and False: # Not supported for SimpleSite, only one per repository?
     # Make sure outside always has the right generated CSS
